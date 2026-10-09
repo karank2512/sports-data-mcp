@@ -1,7 +1,5 @@
 {
- "recorded_at": null,
- "synthetic": true,
- "note": "Hand-written stand-ins shaped like the MLB Stats API. Replace with real recordings via `make record-fixtures`.",
+ "recorded_at": "2026-10-09T21:11:35+00:00",
  "base_url": "https://statsapi.mlb.com/api/v1",
  "fixtures": {
   "teams": {
@@ -21,7 +19,7 @@
    "file": "standings.json"
   },
   "boxscore": {
-   "url": "https://statsapi.mlb.com/api/v1/game/777001/boxscore",
+   "url": "https://statsapi.mlb.com/api/v1/game/777283/boxscore",
    "file": "boxscore.json"
   }
  }
