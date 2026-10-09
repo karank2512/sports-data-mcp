@@ -1,42 +1,543 @@
 {
- "copyright": "synthetic fixture; see index.json",
- "totalGames": 2,
+ "copyright": "Copyright 2026 MLB Advanced Media, L.P.  Use of any content on this page acknowledges agreement to the terms posted here http://gdx.mlb.com/components/copyright.txt",
+ "totalItems": 6,
+ "totalEvents": 0,
+ "totalGames": 6,
+ "totalGamesInProgress": 0,
  "dates": [
   {
    "date": "2025-07-01",
+   "totalItems": 1,
+   "totalEvents": 0,
    "totalGames": 1,
+   "totalGamesInProgress": 0,
    "games": [
     {
-     "gamePk": 777001,
+     "gamePk": 777283,
+     "gameGuid": "993d9733-c111-4964-bfd3-b3fe10ff8fc8",
+     "link": "/api/v1.1/game/777283/feed/live",
      "gameType": "R",
      "season": "2025",
-     "gameDate": "2025-07-01T23:05:00Z",
-     "status": {"abstractGameState": "Final", "detailedState": "Final"},
-     "teams": {
-      "away": {"score": 3, "team": {"id": 111, "name": "Boston Red Sox"}, "isWinner": false},
-      "home": {"score": 5, "team": {"id": 147, "name": "New York Yankees"}, "isWinner": true}
+     "gameDate": "2025-07-01T19:07:00Z",
+     "officialDate": "2025-07-01",
+     "status": {
+      "abstractGameState": "Final",
+      "codedGameState": "F",
+      "detailedState": "Final",
+      "statusCode": "F",
+      "startTimeTBD": false,
+      "abstractGameCode": "F"
      },
-     "venue": {"id": 3313, "name": "Yankee Stadium"}
+     "teams": {
+      "away": {
+       "team": {
+        "id": 147,
+        "name": "New York Yankees",
+        "link": "/api/v1/teams/147"
+       },
+       "leagueRecord": {
+        "wins": 48,
+        "losses": 37,
+        "ties": 0,
+        "pct": ".565"
+       },
+       "score": 5,
+       "isWinner": false,
+       "splitSquad": false,
+       "seriesNumber": 28
+      },
+      "home": {
+       "team": {
+        "id": 141,
+        "name": "Toronto Blue Jays",
+        "link": "/api/v1/teams/141"
+       },
+       "leagueRecord": {
+        "wins": 47,
+        "losses": 38,
+        "ties": 0,
+        "pct": ".553"
+       },
+       "score": 12,
+       "isWinner": true,
+       "splitSquad": false,
+       "seriesNumber": 28
+      }
+     },
+     "venue": {
+      "id": 14,
+      "name": "Rogers Centre",
+      "link": "/api/v1/venues/14"
+     },
+     "content": {
+      "link": "/api/v1/game/777283/content"
+     },
+     "isTie": false,
+     "gameNumber": 1,
+     "publicFacing": true,
+     "doubleHeader": "N",
+     "gamedayType": "P",
+     "tiebreaker": "N",
+     "calendarEventID": "14-777283-2025-07-01",
+     "seasonDisplay": "2025",
+     "dayNight": "day",
+     "scheduledInnings": 9,
+     "reverseHomeAwayStatus": false,
+     "inningBreakLength": 120,
+     "gamesInSeries": 4,
+     "seriesGameNumber": 2,
+     "seriesDescription": "Regular Season",
+     "recordSource": "S",
+     "ifNecessary": "N",
+     "ifNecessaryDescription": "Normal Game"
     }
-   ]
+   ],
+   "events": []
   },
   {
    "date": "2025-07-02",
+   "totalItems": 1,
+   "totalEvents": 0,
    "totalGames": 1,
+   "totalGamesInProgress": 0,
    "games": [
     {
-     "gamePk": 777002,
+     "gamePk": 777274,
+     "gameGuid": "8a302013-6ef5-4e6f-81b2-037662f6447a",
+     "link": "/api/v1.1/game/777274/feed/live",
      "gameType": "R",
      "season": "2025",
-     "gameDate": "2025-07-02T23:05:00Z",
-     "status": {"abstractGameState": "Final", "detailedState": "Final"},
-     "teams": {
-      "away": {"score": 4, "team": {"id": 111, "name": "Boston Red Sox"}, "isWinner": true},
-      "home": {"score": 2, "team": {"id": 147, "name": "New York Yankees"}, "isWinner": false}
+     "gameDate": "2025-07-02T23:07:00Z",
+     "officialDate": "2025-07-02",
+     "status": {
+      "abstractGameState": "Final",
+      "codedGameState": "F",
+      "detailedState": "Final",
+      "statusCode": "F",
+      "startTimeTBD": false,
+      "abstractGameCode": "F"
      },
-     "venue": {"id": 3313, "name": "Yankee Stadium"}
+     "teams": {
+      "away": {
+       "team": {
+        "id": 147,
+        "name": "New York Yankees",
+        "link": "/api/v1/teams/147"
+       },
+       "leagueRecord": {
+        "wins": 48,
+        "losses": 38,
+        "ties": 0,
+        "pct": ".558"
+       },
+       "score": 9,
+       "isWinner": false,
+       "splitSquad": false,
+       "seriesNumber": 28
+      },
+      "home": {
+       "team": {
+        "id": 141,
+        "name": "Toronto Blue Jays",
+        "link": "/api/v1/teams/141"
+       },
+       "leagueRecord": {
+        "wins": 48,
+        "losses": 38,
+        "ties": 0,
+        "pct": ".558"
+       },
+       "score": 11,
+       "isWinner": true,
+       "splitSquad": false,
+       "seriesNumber": 28
+      }
+     },
+     "venue": {
+      "id": 14,
+      "name": "Rogers Centre",
+      "link": "/api/v1/venues/14"
+     },
+     "content": {
+      "link": "/api/v1/game/777274/content"
+     },
+     "isTie": false,
+     "gameNumber": 1,
+     "publicFacing": true,
+     "doubleHeader": "N",
+     "gamedayType": "P",
+     "tiebreaker": "N",
+     "calendarEventID": "14-777274-2025-07-02",
+     "seasonDisplay": "2025",
+     "dayNight": "night",
+     "scheduledInnings": 9,
+     "reverseHomeAwayStatus": false,
+     "inningBreakLength": 120,
+     "gamesInSeries": 4,
+     "seriesGameNumber": 3,
+     "seriesDescription": "Regular Season",
+     "recordSource": "S",
+     "ifNecessary": "N",
+     "ifNecessaryDescription": "Normal Game"
     }
-   ]
+   ],
+   "events": []
+  },
+  {
+   "date": "2025-07-03",
+   "totalItems": 1,
+   "totalEvents": 0,
+   "totalGames": 1,
+   "totalGamesInProgress": 0,
+   "games": [
+    {
+     "gamePk": 777260,
+     "gameGuid": "4be47c4a-ce07-493a-8b15-222609bfb76d",
+     "link": "/api/v1.1/game/777260/feed/live",
+     "gameType": "R",
+     "season": "2025",
+     "gameDate": "2025-07-03T23:07:00Z",
+     "officialDate": "2025-07-03",
+     "status": {
+      "abstractGameState": "Final",
+      "codedGameState": "F",
+      "detailedState": "Final",
+      "statusCode": "F",
+      "startTimeTBD": false,
+      "abstractGameCode": "F"
+     },
+     "teams": {
+      "away": {
+       "team": {
+        "id": 147,
+        "name": "New York Yankees",
+        "link": "/api/v1/teams/147"
+       },
+       "leagueRecord": {
+        "wins": 48,
+        "losses": 39,
+        "ties": 0,
+        "pct": ".552"
+       },
+       "score": 5,
+       "isWinner": false,
+       "splitSquad": false,
+       "seriesNumber": 28
+      },
+      "home": {
+       "team": {
+        "id": 141,
+        "name": "Toronto Blue Jays",
+        "link": "/api/v1/teams/141"
+       },
+       "leagueRecord": {
+        "wins": 49,
+        "losses": 38,
+        "ties": 0,
+        "pct": ".563"
+       },
+       "score": 8,
+       "isWinner": true,
+       "splitSquad": false,
+       "seriesNumber": 28
+      }
+     },
+     "venue": {
+      "id": 14,
+      "name": "Rogers Centre",
+      "link": "/api/v1/venues/14"
+     },
+     "content": {
+      "link": "/api/v1/game/777260/content"
+     },
+     "isTie": false,
+     "gameNumber": 1,
+     "publicFacing": true,
+     "doubleHeader": "N",
+     "gamedayType": "P",
+     "tiebreaker": "N",
+     "calendarEventID": "14-777260-2025-07-03",
+     "seasonDisplay": "2025",
+     "dayNight": "night",
+     "scheduledInnings": 9,
+     "reverseHomeAwayStatus": false,
+     "inningBreakLength": 120,
+     "gamesInSeries": 4,
+     "seriesGameNumber": 4,
+     "seriesDescription": "Regular Season",
+     "recordSource": "S",
+     "ifNecessary": "N",
+     "ifNecessaryDescription": "Normal Game"
+    }
+   ],
+   "events": []
+  },
+  {
+   "date": "2025-07-04",
+   "totalItems": 1,
+   "totalEvents": 0,
+   "totalGames": 1,
+   "totalGamesInProgress": 0,
+   "games": [
+    {
+     "gamePk": 777250,
+     "gameGuid": "53f82c17-2281-434e-9677-195aa3933c13",
+     "link": "/api/v1.1/game/777250/feed/live",
+     "gameType": "R",
+     "season": "2025",
+     "gameDate": "2025-07-04T19:10:00Z",
+     "officialDate": "2025-07-04",
+     "status": {
+      "abstractGameState": "Final",
+      "codedGameState": "F",
+      "detailedState": "Final",
+      "statusCode": "F",
+      "startTimeTBD": false,
+      "abstractGameCode": "F"
+     },
+     "teams": {
+      "away": {
+       "team": {
+        "id": 147,
+        "name": "New York Yankees",
+        "link": "/api/v1/teams/147"
+       },
+       "leagueRecord": {
+        "wins": 48,
+        "losses": 40,
+        "ties": 0,
+        "pct": ".545"
+       },
+       "score": 5,
+       "isWinner": false,
+       "splitSquad": false,
+       "seriesNumber": 29
+      },
+      "home": {
+       "team": {
+        "id": 121,
+        "name": "New York Mets",
+        "link": "/api/v1/teams/121"
+       },
+       "leagueRecord": {
+        "wins": 51,
+        "losses": 38,
+        "ties": 0,
+        "pct": ".573"
+       },
+       "score": 6,
+       "isWinner": true,
+       "splitSquad": false,
+       "seriesNumber": 29
+      }
+     },
+     "venue": {
+      "id": 3289,
+      "name": "Citi Field",
+      "link": "/api/v1/venues/3289"
+     },
+     "content": {
+      "link": "/api/v1/game/777250/content"
+     },
+     "isTie": false,
+     "gameNumber": 1,
+     "publicFacing": true,
+     "doubleHeader": "N",
+     "gamedayType": "P",
+     "tiebreaker": "N",
+     "calendarEventID": "14-777250-2025-07-04",
+     "seasonDisplay": "2025",
+     "dayNight": "day",
+     "scheduledInnings": 9,
+     "reverseHomeAwayStatus": false,
+     "inningBreakLength": 120,
+     "gamesInSeries": 3,
+     "seriesGameNumber": 1,
+     "seriesDescription": "Regular Season",
+     "recordSource": "S",
+     "ifNecessary": "N",
+     "ifNecessaryDescription": "Normal Game"
+    }
+   ],
+   "events": []
+  },
+  {
+   "date": "2025-07-05",
+   "totalItems": 1,
+   "totalEvents": 0,
+   "totalGames": 1,
+   "totalGamesInProgress": 0,
+   "games": [
+    {
+     "gamePk": 777241,
+     "gameGuid": "1fa9b488-0929-4821-ab53-868063f22288",
+     "link": "/api/v1.1/game/777241/feed/live",
+     "gameType": "R",
+     "season": "2025",
+     "gameDate": "2025-07-05T20:10:00Z",
+     "officialDate": "2025-07-05",
+     "status": {
+      "abstractGameState": "Final",
+      "codedGameState": "F",
+      "detailedState": "Final",
+      "statusCode": "F",
+      "startTimeTBD": false,
+      "abstractGameCode": "F"
+     },
+     "teams": {
+      "away": {
+       "team": {
+        "id": 147,
+        "name": "New York Yankees",
+        "link": "/api/v1/teams/147"
+       },
+       "leagueRecord": {
+        "wins": 48,
+        "losses": 41,
+        "ties": 0,
+        "pct": ".539"
+       },
+       "score": 6,
+       "isWinner": false,
+       "splitSquad": false,
+       "seriesNumber": 29
+      },
+      "home": {
+       "team": {
+        "id": 121,
+        "name": "New York Mets",
+        "link": "/api/v1/teams/121"
+       },
+       "leagueRecord": {
+        "wins": 52,
+        "losses": 38,
+        "ties": 0,
+        "pct": ".578"
+       },
+       "score": 12,
+       "isWinner": true,
+       "splitSquad": false,
+       "seriesNumber": 29
+      }
+     },
+     "venue": {
+      "id": 3289,
+      "name": "Citi Field",
+      "link": "/api/v1/venues/3289"
+     },
+     "content": {
+      "link": "/api/v1/game/777241/content"
+     },
+     "isTie": false,
+     "gameNumber": 1,
+     "publicFacing": true,
+     "doubleHeader": "N",
+     "gamedayType": "P",
+     "tiebreaker": "N",
+     "calendarEventID": "14-777241-2025-07-05",
+     "seasonDisplay": "2025",
+     "dayNight": "day",
+     "scheduledInnings": 9,
+     "reverseHomeAwayStatus": false,
+     "inningBreakLength": 120,
+     "gamesInSeries": 3,
+     "seriesGameNumber": 2,
+     "seriesDescription": "Regular Season",
+     "recordSource": "S",
+     "ifNecessary": "N",
+     "ifNecessaryDescription": "Normal Game"
+    }
+   ],
+   "events": []
+  },
+  {
+   "date": "2025-07-06",
+   "totalItems": 1,
+   "totalEvents": 0,
+   "totalGames": 1,
+   "totalGamesInProgress": 0,
+   "games": [
+    {
+     "gamePk": 777216,
+     "gameGuid": "23688323-8280-423b-9b37-04578a849f0e",
+     "link": "/api/v1.1/game/777216/feed/live",
+     "gameType": "R",
+     "season": "2025",
+     "gameDate": "2025-07-06T17:40:00Z",
+     "officialDate": "2025-07-06",
+     "status": {
+      "abstractGameState": "Final",
+      "codedGameState": "F",
+      "detailedState": "Final",
+      "statusCode": "F",
+      "startTimeTBD": false,
+      "abstractGameCode": "F"
+     },
+     "teams": {
+      "away": {
+       "team": {
+        "id": 147,
+        "name": "New York Yankees",
+        "link": "/api/v1/teams/147"
+       },
+       "leagueRecord": {
+        "wins": 49,
+        "losses": 41,
+        "ties": 0,
+        "pct": ".544"
+       },
+       "score": 6,
+       "isWinner": true,
+       "splitSquad": false,
+       "seriesNumber": 29
+      },
+      "home": {
+       "team": {
+        "id": 121,
+        "name": "New York Mets",
+        "link": "/api/v1/teams/121"
+       },
+       "leagueRecord": {
+        "wins": 52,
+        "losses": 39,
+        "ties": 0,
+        "pct": ".571"
+       },
+       "score": 4,
+       "isWinner": false,
+       "splitSquad": false,
+       "seriesNumber": 29
+      }
+     },
+     "venue": {
+      "id": 3289,
+      "name": "Citi Field",
+      "link": "/api/v1/venues/3289"
+     },
+     "content": {
+      "link": "/api/v1/game/777216/content"
+     },
+     "isTie": false,
+     "gameNumber": 1,
+     "publicFacing": true,
+     "doubleHeader": "N",
+     "gamedayType": "P",
+     "tiebreaker": "N",
+     "calendarEventID": "14-777216-2025-07-06",
+     "seasonDisplay": "2025",
+     "dayNight": "day",
+     "scheduledInnings": 9,
+     "reverseHomeAwayStatus": false,
+     "inningBreakLength": 120,
+     "gamesInSeries": 3,
+     "seriesGameNumber": 3,
+     "seriesDescription": "Regular Season",
+     "recordSource": "S",
+     "ifNecessary": "N",
+     "ifNecessaryDescription": "Normal Game"
+    }
+   ],
+   "events": []
   }
  ]
 }
