@@ -1,5 +1,5 @@
 {
- "recorded_at": "2026-10-09T21:11:35+00:00",
+ "recorded_at": "2026-10-09T21:36:09+00:00",
  "base_url": "https://statsapi.mlb.com/api/v1",
  "fixtures": {
   "teams": {
@@ -24,13 +24,11 @@
   },
   "player_stats_season": {
    "url": "https://statsapi.mlb.com/api/v1/people/592450/stats?stats=season&group=hitting&season=2025",
-   "file": "player_stats_season.json",
-   "synthetic": true
+   "file": "player_stats_season.json"
   },
   "player_stats_career": {
    "url": "https://statsapi.mlb.com/api/v1/people/592450/stats?stats=career&group=hitting",
-   "file": "player_stats_career.json",
-   "synthetic": true
+   "file": "player_stats_career.json"
   }
  }
 }
