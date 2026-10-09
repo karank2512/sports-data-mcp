@@ -1,0 +1,22 @@
+{
+ "copyright": "synthetic fixture; see index.json",
+ "teams": {
+  "away": {
+   "team": {"id": 111, "name": "Boston Red Sox"},
+   "teamStats": {"batting": {"runs": 3, "hits": 7}, "pitching": {"runs": 5, "hits": 9}},
+   "players": {
+    "ID100001": {"person": {"id": 100001, "fullName": "Away Batter"}, "position": {"abbreviation": "SS"}, "stats": {"batting": {"atBats": 4, "hits": 2, "runs": 1}}}
+   },
+   "batters": [100001]
+  },
+  "home": {
+   "team": {"id": 147, "name": "New York Yankees"},
+   "teamStats": {"batting": {"runs": 5, "hits": 9}, "pitching": {"runs": 3, "hits": 7}},
+   "players": {
+    "ID592450": {"person": {"id": 592450, "fullName": "Aaron Judge"}, "position": {"abbreviation": "RF"}, "stats": {"batting": {"atBats": 4, "hits": 2, "runs": 2, "homeRuns": 1}}}
+   },
+   "batters": [592450]
+  }
+ },
+ "info": [{"label": "Venue", "value": "Yankee Stadium."}]
+}

@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sports_data_mcp"
+version = "0.1.0"
+description = "MCP server over public sports stats APIs (MLB first)."
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.11"
+dependencies = [
+    "mcp>=2,<3",
+    "httpx>=0.27",
+]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[project.scripts]
+sports-data-mcp = "sports_data_mcp.server:main"
+
+[tool.setuptools.packages.find]
+include = ["sports_data_mcp*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

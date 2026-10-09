@@ -1,0 +1,41 @@
+{
+ "copyright": "synthetic fixture; see index.json",
+ "teams": [
+  {
+   "id": 147,
+   "name": "New York Yankees",
+   "teamCode": "nya",
+   "abbreviation": "NYY",
+   "teamName": "Yankees",
+   "locationName": "Bronx",
+   "league": {"id": 103, "name": "American League"},
+   "division": {"id": 201, "name": "American League East"},
+   "sport": {"id": 1, "name": "Major League Baseball"},
+   "active": true
+  },
+  {
+   "id": 111,
+   "name": "Boston Red Sox",
+   "teamCode": "bos",
+   "abbreviation": "BOS",
+   "teamName": "Red Sox",
+   "locationName": "Boston",
+   "league": {"id": 103, "name": "American League"},
+   "division": {"id": 201, "name": "American League East"},
+   "sport": {"id": 1, "name": "Major League Baseball"},
+   "active": true
+  },
+  {
+   "id": 119,
+   "name": "Los Angeles Dodgers",
+   "teamCode": "lan",
+   "abbreviation": "LAD",
+   "teamName": "Dodgers",
+   "locationName": "Los Angeles",
+   "league": {"id": 104, "name": "National League"},
+   "division": {"id": 203, "name": "National League West"},
+   "sport": {"id": 1, "name": "Major League Baseball"},
+   "active": true
+  }
+ ]
+}
