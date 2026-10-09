@@ -1,0 +1,68 @@
+{
+ "copyright": "SYNTHETIC PLACEHOLDER: not a real API response. Replace by running `make record-fixtures`.",
+ "stats": [
+  {
+   "type": {
+    "displayName": "career"
+   },
+   "group": {
+    "displayName": "hitting"
+   },
+   "exemptions": [],
+   "splits": [
+    {
+     "stat": {
+      "gamesPlayed": 1000,
+      "groundOuts": 500,
+      "airOuts": 500,
+      "runs": 700,
+      "doubles": 200,
+      "triples": 10,
+      "homeRuns": 300,
+      "strikeOuts": 1100,
+      "baseOnBalls": 700,
+      "intentionalWalks": 50,
+      "hits": 1000,
+      "hitByPitch": 30,
+      "avg": ".290",
+      "atBats": 3448,
+      "obp": ".400",
+      "slg": ".600",
+      "ops": "1.000",
+      "caughtStealing": 10,
+      "stolenBases": 50,
+      "stolenBasePercentage": ".833",
+      "groundIntoDoublePlay": 80,
+      "numberOfPitches": 16000,
+      "plateAppearances": 4200,
+      "totalBases": 2120,
+      "rbi": 800,
+      "leftOnBase": 1500,
+      "sacBunts": 0,
+      "sacFlies": 40,
+      "babip": ".320",
+      "groundOutsToAirouts": "1.00",
+      "catchersInterference": 0,
+      "atBatsPerHomeRun": "11.49"
+     },
+     "player": {
+      "id": 592450,
+      "fullName": "Aaron Judge",
+      "link": "/api/v1/people/592450"
+     },
+     "league": {
+      "id": 103,
+      "name": "American League",
+      "link": "/api/v1/league/103"
+     },
+     "sport": {
+      "id": 1,
+      "link": "/api/v1/sports/1",
+      "abbreviation": "MLB"
+     },
+     "gameType": "R"
+    }
+   ]
+  }
+ ]
+}

@@ -21,6 +21,16 @@
   "boxscore": {
    "url": "https://statsapi.mlb.com/api/v1/game/777283/boxscore",
    "file": "boxscore.json"
+  },
+  "player_stats_season": {
+   "url": "https://statsapi.mlb.com/api/v1/people/592450/stats?stats=season&group=hitting&season=2025",
+   "file": "player_stats_season.json",
+   "synthetic": true
+  },
+  "player_stats_career": {
+   "url": "https://statsapi.mlb.com/api/v1/people/592450/stats?stats=career&group=hitting",
+   "file": "player_stats_career.json",
+   "synthetic": true
   }
  }
 }
