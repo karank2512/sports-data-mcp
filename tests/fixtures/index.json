@@ -1,0 +1,28 @@
+{
+ "recorded_at": null,
+ "synthetic": true,
+ "note": "Hand-written stand-ins shaped like the MLB Stats API. Replace with real recordings via `make record-fixtures`.",
+ "base_url": "https://statsapi.mlb.com/api/v1",
+ "fixtures": {
+  "teams": {
+   "url": "https://statsapi.mlb.com/api/v1/teams?sportId=1",
+   "file": "teams.json"
+  },
+  "schedule_week": {
+   "url": "https://statsapi.mlb.com/api/v1/schedule?sportId=1&teamId=147&startDate=2025-07-01&endDate=2025-07-07",
+   "file": "schedule_week.json"
+  },
+  "player_search": {
+   "url": "https://statsapi.mlb.com/api/v1/people/search?names=Aaron+Judge&sportIds=1",
+   "file": "player_search.json"
+  },
+  "standings": {
+   "url": "https://statsapi.mlb.com/api/v1/standings?leagueId=103%2C104&season=2025",
+   "file": "standings.json"
+  },
+  "boxscore": {
+   "url": "https://statsapi.mlb.com/api/v1/game/777001/boxscore",
+   "file": "boxscore.json"
+  }
+ }
+}

@@ -1,0 +1,15 @@
+{
+ "copyright": "synthetic fixture; see index.json",
+ "people": [
+  {
+   "id": 592450,
+   "fullName": "Aaron Judge",
+   "firstName": "Aaron",
+   "lastName": "Judge",
+   "primaryNumber": "99",
+   "currentTeam": {"id": 147},
+   "primaryPosition": {"code": "9", "name": "Outfielder", "abbreviation": "RF"},
+   "active": true
+  }
+ ]
+}

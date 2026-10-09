@@ -1,0 +1,42 @@
+{
+ "copyright": "synthetic fixture; see index.json",
+ "totalGames": 2,
+ "dates": [
+  {
+   "date": "2025-07-01",
+   "totalGames": 1,
+   "games": [
+    {
+     "gamePk": 777001,
+     "gameType": "R",
+     "season": "2025",
+     "gameDate": "2025-07-01T23:05:00Z",
+     "status": {"abstractGameState": "Final", "detailedState": "Final"},
+     "teams": {
+      "away": {"score": 3, "team": {"id": 111, "name": "Boston Red Sox"}, "isWinner": false},
+      "home": {"score": 5, "team": {"id": 147, "name": "New York Yankees"}, "isWinner": true}
+     },
+     "venue": {"id": 3313, "name": "Yankee Stadium"}
+    }
+   ]
+  },
+  {
+   "date": "2025-07-02",
+   "totalGames": 1,
+   "games": [
+    {
+     "gamePk": 777002,
+     "gameType": "R",
+     "season": "2025",
+     "gameDate": "2025-07-02T23:05:00Z",
+     "status": {"abstractGameState": "Final", "detailedState": "Final"},
+     "teams": {
+      "away": {"score": 4, "team": {"id": 111, "name": "Boston Red Sox"}, "isWinner": true},
+      "home": {"score": 2, "team": {"id": 147, "name": "New York Yankees"}, "isWinner": false}
+     },
+     "venue": {"id": 3313, "name": "Yankee Stadium"}
+    }
+   ]
+  }
+ ]
+}

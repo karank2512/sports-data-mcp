@@ -1,0 +1,24 @@
+{
+ "copyright": "synthetic fixture; see index.json",
+ "records": [
+  {
+   "standingsType": "regularSeason",
+   "league": {"id": 103},
+   "division": {"id": 201},
+   "season": "2025",
+   "teamRecords": [
+    {"team": {"id": 147, "name": "New York Yankees"}, "wins": 50, "losses": 36, "winningPercentage": ".581", "divisionRank": "1", "gamesBack": "-"},
+    {"team": {"id": 111, "name": "Boston Red Sox"}, "wins": 45, "losses": 42, "winningPercentage": ".517", "divisionRank": "2", "gamesBack": "5.5"}
+   ]
+  },
+  {
+   "standingsType": "regularSeason",
+   "league": {"id": 104},
+   "division": {"id": 203},
+   "season": "2025",
+   "teamRecords": [
+    {"team": {"id": 119, "name": "Los Angeles Dodgers"}, "wins": 55, "losses": 32, "winningPercentage": ".632", "divisionRank": "1", "gamesBack": "-"}
+   ]
+  }
+ ]
+}
