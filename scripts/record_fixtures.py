@@ -7,7 +7,9 @@ tests. Each endpoint is written to ``tests/fixtures/<name>.json`` and
 ``tests/conftest.py`` can serve them through an ``httpx.MockTransport``.
 
 The boxscore endpoint needs a game id; it is taken from the first game in
-the recorded schedule so the set stays self-consistent.
+the recorded schedule so the set stays self-consistent. Likewise the two
+player stats endpoints take their player id from the first person in the
+recorded ``player_search`` response.
 """
 
 from __future__ import annotations
@@ -46,6 +48,17 @@ ENDPOINTS: list[tuple[str, str, dict[str, Any]]] = [
 ]
 
 
+STATS_GROUP = "hitting"
+
+# Fixture names this script produces, in recording order. Kept as a flat list
+# so a reader (or a test) can see the full set without tracing ``record``.
+FIXTURE_NAMES: tuple[str, ...] = tuple(name for name, _path, _params in ENDPOINTS) + (
+    "boxscore",
+    "player_stats_season",
+    "player_stats_career",
+)
+
+
 def first_game_pk(schedule: dict[str, Any]) -> int:
     for date in schedule.get("dates", []):
         for game in date.get("games", []):
@@ -54,15 +67,34 @@ def first_game_pk(schedule: dict[str, Any]) -> int:
     raise SystemExit("schedule fixture has no games; cannot pick a boxscore game")
 
 
+def first_person_id(search: dict[str, Any]) -> int:
+    for person in search.get("people", []):
+        if "id" in person:
+            return int(person["id"])
+    raise SystemExit("player_search fixture has no people; cannot pick a player for stats")
+
+
+def dependent_endpoints(recorded: dict[str, Any]) -> list[tuple[str, str, dict[str, Any]]]:
+    """Endpoints whose path or params come from an already recorded response."""
+    game_pk = first_game_pk(recorded["schedule_week"])
+    player_id = first_person_id(recorded["player_search"])
+    stats_path = f"/people/{player_id}/stats"
+    return [
+        ("boxscore", f"/game/{game_pk}/boxscore", {}),
+        ("player_stats_season", stats_path, {"stats": "season", "group": STATS_GROUP, "season": SEASON}),
+        ("player_stats_career", stats_path, {"stats": "career", "group": STATS_GROUP}),
+    ]
+
+
 def record(base_url: str, out_dir: Path) -> dict[str, dict[str, str]]:
     out_dir.mkdir(parents=True, exist_ok=True)
     index: dict[str, dict[str, str]] = {}
     with tempfile.TemporaryDirectory(prefix="record-fixtures-") as tmp:
         client = MLBClient(base_url=base_url, cache_dir=tmp, ttl_s=0)
         try:
-            endpoints = list(ENDPOINTS)
             recorded: dict[str, Any] = {}
-            for name, path, params in endpoints:
+
+            def record_one(name: str, path: str, params: dict[str, Any]) -> None:
                 url = client.url_for(path, params)
                 print(f"GET {url}", file=sys.stderr)
                 data = client.get(path, params)
@@ -70,13 +102,10 @@ def record(base_url: str, out_dir: Path) -> dict[str, dict[str, str]]:
                 (out_dir / f"{name}.json").write_text(json.dumps(data, indent=1) + "\n", encoding="utf-8")
                 index[name] = {"url": url, "file": f"{name}.json"}
 
-            game_pk = first_game_pk(recorded["schedule_week"])
-            path = f"/game/{game_pk}/boxscore"
-            url = client.url_for(path)
-            print(f"GET {url}", file=sys.stderr)
-            data = client.get(path)
-            (out_dir / "boxscore.json").write_text(json.dumps(data, indent=1) + "\n", encoding="utf-8")
-            index["boxscore"] = {"url": url, "file": "boxscore.json"}
+            for name, path, params in ENDPOINTS:
+                record_one(name, path, params)
+            for name, path, params in dependent_endpoints(recorded):
+                record_one(name, path, params)
         finally:
             client.close()
 

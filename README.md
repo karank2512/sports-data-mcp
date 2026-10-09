@@ -6,7 +6,7 @@ Data comes from the public MLB Stats API (`statsapi.mlb.com`). This project is n
 
 ## Status
 
-Pre-alpha. The first packet lands the scaffold: a cached MLB Stats API client, a stdio MCP server with a single `mlb_ping` tool, and an offline test suite.
+Pre-alpha. So far: a cached MLB Stats API client, a stdio MCP server with `mlb_ping`, `mlb_search_player` and `mlb_player_stats`, and an offline test suite.
 
 ## Install
 
@@ -57,6 +57,10 @@ Or add the same `mcpServers` block to `.mcp.json` in your project.
 | Tool | Returns |
 | --- | --- |
 | `mlb_ping()` | `{ok: true, cached: bool, teams: int}` from `/teams?sportId=1`. `cached` is true when the answer came from disk without a request. |
+| `mlb_search_player(name, active_only=true)` | Up to 10 `{id, full_name, team, position, bats, throws, active}` from `/people/search?names=`. `name` must be at least 2 characters (shorter is a tool error). `active_only` drops inactive people. `team` is null when the API omits `currentTeam`. |
+| `mlb_player_stats(player_id, season, group="hitting", type="season")` | `{player_id, season, group, type, splits, cached, source_url}` from `/people/{id}/stats`. `group` is `hitting`, `pitching` or `fielding`; `type` is `season` (for `season`) or `career` (ignores `season`). Each split is a flat dict: the API's stat names verbatim (`gamesPlayed`, `avg`, `era`...) plus `season`, `game_type`, `team`, `team_id`, `player_id`. An unknown player id is a tool error carrying the API's message. |
+
+Tool errors (bad input, API 4xx/5xx after retry, offline cache miss) come back as MCP `isError` results with the message in the content, so the calling model can read them.
 
 ## How caching works
 
@@ -65,16 +69,18 @@ Every GET is cached on disk as JSON, keyed by the sha256 of the full URL. A resp
 ## Development
 
 ```bash
-make test             # offline; serves tests/fixtures/ through an httpx MockTransport
-make record-fixtures  # needs network: re-records tests/fixtures/*.json from statsapi.mlb.com
+make test                                   # offline; serves tests/fixtures/ through an httpx MockTransport
+make test TESTS=tests/test_players.py       # one file
+make test PYTEST_ARGS="-x -k stats"         # extra pytest options
+make record-fixtures                        # needs network: re-records tests/fixtures/*.json from statsapi.mlb.com
 ```
 
-`tests/fixtures/index.json` maps each fixture name to the exact URL it answers. The checked-in fixtures are small hand-written stand-ins shaped like the real API (the index says `"synthetic": true`); run `make record-fixtures` to replace them with real recordings. Tests never contact the network: an autouse fixture makes any real `httpx` transport fail.
+`tests/fixtures/index.json` maps each fixture name to the exact URL it answers. Most fixtures are real recordings; an entry marked `"synthetic": true` is a hand-written placeholder in the documented response shape, waiting for `make record-fixtures` to replace it with a real response. Tests derive their expected values from the fixture contents so they keep passing after re-recording. Tests never contact the network: an autouse fixture makes any real `httpx` transport fail.
 
 ## What it does not do
 
 - No live or streaming data; everything is a cached GET of a public endpoint.
-- No other sports yet. Only the MLB Stats API is wired up, and only `mlb_ping` is exposed.
+- No other sports yet. Only the MLB Stats API is wired up, and only the tools in the table above are exposed.
 - No authentication, API keys, or paid data sources. It uses only the public, unauthenticated API.
 - No betting odds, projections, or any data that the MLB Stats API does not publish.
 - No write operations of any kind.

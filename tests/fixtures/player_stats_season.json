@@ -1,0 +1,74 @@
+{
+ "copyright": "SYNTHETIC PLACEHOLDER: not a real API response. Replace by running `make record-fixtures`.",
+ "stats": [
+  {
+   "type": {
+    "displayName": "season"
+   },
+   "group": {
+    "displayName": "hitting"
+   },
+   "exemptions": [],
+   "splits": [
+    {
+     "season": "2025",
+     "stat": {
+      "gamesPlayed": 100,
+      "groundOuts": 50,
+      "airOuts": 50,
+      "runs": 60,
+      "doubles": 20,
+      "triples": 1,
+      "homeRuns": 30,
+      "strikeOuts": 90,
+      "baseOnBalls": 70,
+      "intentionalWalks": 5,
+      "hits": 100,
+      "hitByPitch": 3,
+      "avg": ".300",
+      "atBats": 333,
+      "obp": ".400",
+      "slg": ".600",
+      "ops": "1.000",
+      "caughtStealing": 1,
+      "stolenBases": 5,
+      "stolenBasePercentage": ".833",
+      "groundIntoDoublePlay": 8,
+      "numberOfPitches": 1600,
+      "plateAppearances": 410,
+      "totalBases": 212,
+      "rbi": 80,
+      "leftOnBase": 150,
+      "sacBunts": 0,
+      "sacFlies": 4,
+      "babip": ".320",
+      "groundOutsToAirouts": "1.00",
+      "catchersInterference": 0,
+      "atBatsPerHomeRun": "11.10"
+     },
+     "team": {
+      "id": 147,
+      "name": "New York Yankees",
+      "link": "/api/v1/teams/147"
+     },
+     "player": {
+      "id": 592450,
+      "fullName": "Aaron Judge",
+      "link": "/api/v1/people/592450"
+     },
+     "league": {
+      "id": 103,
+      "name": "American League",
+      "link": "/api/v1/league/103"
+     },
+     "sport": {
+      "id": 1,
+      "link": "/api/v1/sports/1",
+      "abbreviation": "MLB"
+     },
+     "gameType": "R"
+    }
+   ]
+  }
+ ]
+}
