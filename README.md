@@ -6,7 +6,7 @@ Data comes from the public MLB Stats API (`statsapi.mlb.com`). This project is n
 
 ## Status
 
-Pre-alpha. So far: a cached MLB Stats API client, a stdio MCP server with `mlb_ping`, `mlb_search_player` and `mlb_player_stats`, and an offline test suite.
+Pre-alpha. So far: a cached MLB Stats API client, a stdio MCP server with `mlb_ping`, `mlb_search_player`, `mlb_player_stats`, `mlb_team_schedule` and `mlb_standings`, and an offline test suite.
 
 ## Install
 
@@ -59,6 +59,8 @@ Or add the same `mcpServers` block to `.mcp.json` in your project.
 | `mlb_ping()` | `{ok: true, cached: bool, teams: int}` from `/teams?sportId=1`. `cached` is true when the answer came from disk without a request. |
 | `mlb_search_player(name, active_only=true)` | Up to 10 `{id, full_name, team, position, bats, throws, active}` from `/people/search?names=`. `name` must be at least 2 characters (shorter is a tool error). `active_only` drops inactive people. `team` is null when the API omits `currentTeam`. |
 | `mlb_player_stats(player_id, season, group="hitting", type="season")` | `{player_id, season, group, type, splits, cached, source_url}` from `/people/{id}/stats`. `group` is `hitting`, `pitching` or `fielding`; `type` is `season` (for `season`) or `career` (ignores `season`). Each split is a flat dict: the API's stat names verbatim (`gamesPlayed`, `avg`, `era`...) plus `season`, `game_type`, `team`, `team_id`, `player_id`. An unknown player id is a tool error carrying the API's message. |
+| `mlb_team_schedule(team, start, end)` | `{team_id, team, start, end, games, cached, source_url}` from `/schedule`. `team` is an id (`147`) or any name the team goes by (`"New York Yankees"`, `"Yankees"`, `"NYY"`, `"Bronx"`), matched case-insensitively against the cached `/teams` list; a name shared by several teams (`"New York"`, `"Chicago"`) is a tool error listing the candidates. `start`/`end` are inclusive `YYYY-MM-DD` dates covering at most 31 days (more is a tool error). Each game is `{game_pk, date, home, away, status, home_score, away_score, venue}`; scores are null until published. |
+| `mlb_standings(season, league="all")` | `{season, league, divisions, cached, source_url}` from `/standings?leagueId=103,104`. Both leagues are fetched in one request and `league` (`AL`, `NL` or `all`) filters the divisions. Each division is `{division_id, division, league_id, league, teams}` with teams in rank order as `{team_id, team, w, l, pct, gb, streak}`; `pct` and `gb` are the API's strings verbatim (`".580"`, `"-"` for the leader) and `streak` is a code such as `"W4"`. Division and league names come from the cached `/teams` list. |
 
 Tool errors (bad input, API 4xx/5xx after retry, offline cache miss) come back as MCP `isError` results with the message in the content, so the calling model can read them.
 

@@ -28,7 +28,9 @@ def test_mlb_ping_shape_and_cache_flag(injected_client: MLBClient, request_log, 
 
 def test_mlb_ping_is_registered_and_callable_via_mcp(injected_client: MLBClient, fixture_by_name) -> None:
     tools = asyncio.run(server.mcp.list_tools())
-    assert [t.name for t in tools] == ["mlb_ping", "mlb_search_player", "mlb_player_stats"]
+    assert [t.name for t in tools] == [
+        "mlb_ping", "mlb_search_player", "mlb_player_stats", "mlb_team_schedule", "mlb_standings",
+    ]
     assert tools[0].input_schema.get("properties", {}) == {}
 
     result = asyncio.run(server.mcp.call_tool("mlb_ping", {}))
