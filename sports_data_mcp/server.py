@@ -11,7 +11,7 @@ from mcp.server.mcpserver import MCPServer
 from mcp.server.mcpserver.exceptions import ToolError
 
 from sports_data_mcp import __version__
-from sports_data_mcp.mlb import players
+from sports_data_mcp.mlb import players, teams
 from sports_data_mcp.mlb.client import DEFAULT_BASE_URL, DEFAULT_CACHE_DIR, DEFAULT_TTL_S, APIError, MLBClient
 
 mcp = MCPServer(
@@ -105,6 +105,64 @@ def mlb_player_stats(
         "group": group,
         "type": type,
         "splits": splits,
+        "cached": cached,
+        "source_url": url,
+    }
+
+
+@mcp.tool()
+def mlb_team_schedule(team: str | int, start: str, end: str) -> dict[str, Any]:
+    """Games for one team over a date range of at most 31 days.
+
+    ``team`` is a team id (``147``) or any name the team goes by: full name
+    (``"New York Yankees"``), nickname (``"Yankees"``), abbreviation
+    (``"NYY"``), location or short name, matched case-insensitively against
+    the cached ``/teams`` list. A name matching several teams (``"New York"``)
+    is a tool error listing the candidates. ``start`` and ``end`` are
+    inclusive ``YYYY-MM-DD`` dates spanning at most 31 days. Returns
+    ``{team_id, team, start, end, games, cached, source_url}`` where each
+    game is ``{game_pk, date, home, away, status, home_score, away_score,
+    venue}``; scores are null until the API publishes them.
+    """
+    try:
+        games, cached, url, record = teams.team_schedule(get_client(), team, start, end)
+    except teams.TeamError as exc:
+        raise ToolError(str(exc)) from exc
+    except APIError as exc:
+        raise ToolError(exc.message) from exc
+    return {
+        "team_id": record.get("id"),
+        "team": record.get("name"),
+        "start": start,
+        "end": end,
+        "games": games,
+        "cached": cached,
+        "source_url": url,
+    }
+
+
+@mcp.tool()
+def mlb_standings(season: int, league: teams.League = "all") -> dict[str, Any]:
+    """Division standings for a season.
+
+    Fetches ``/standings`` for both leagues and returns
+    ``{season, league, divisions, cached, source_url}``. ``league`` keeps only
+    ``"AL"`` or ``"NL"`` divisions; ``"all"`` (the default) returns all six.
+    Each division is ``{division_id, division, league_id, league, teams}``
+    with teams in rank order as ``{team_id, team, w, l, pct, gb, streak}``.
+    ``pct`` and ``gb`` are the API's strings verbatim (``".580"``, ``"-"`` for
+    the leader); ``streak`` is a code such as ``"W4"``.
+    """
+    try:
+        divisions, cached, url = teams.standings(get_client(), season, league=league)
+    except teams.TeamError as exc:
+        raise ToolError(str(exc)) from exc
+    except APIError as exc:
+        raise ToolError(exc.message) from exc
+    return {
+        "season": season,
+        "league": league,
+        "divisions": divisions,
         "cached": cached,
         "source_url": url,
     }
