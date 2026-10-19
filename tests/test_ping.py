@@ -30,6 +30,7 @@ def test_mlb_ping_is_registered_and_callable_via_mcp(injected_client: MLBClient,
     tools = asyncio.run(server.mcp.list_tools())
     assert [t.name for t in tools] == [
         "mlb_ping", "mlb_search_player", "mlb_player_stats", "mlb_team_schedule", "mlb_standings",
+        "mlb_game_boxscore", "mlb_live_linescore",
     ]
     assert tools[0].input_schema.get("properties", {}) == {}
 
