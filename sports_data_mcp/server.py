@@ -11,7 +11,7 @@ from mcp.server.mcpserver import MCPServer
 from mcp.server.mcpserver.exceptions import ToolError
 
 from sports_data_mcp import __version__
-from sports_data_mcp.mlb import players, teams
+from sports_data_mcp.mlb import games, players, teams
 from sports_data_mcp.mlb.client import DEFAULT_BASE_URL, DEFAULT_CACHE_DIR, DEFAULT_TTL_S, APIError, MLBClient
 
 mcp = MCPServer(
@@ -166,6 +166,58 @@ def mlb_standings(season: int, league: teams.League = "all") -> dict[str, Any]:
         "cached": cached,
         "source_url": url,
     }
+
+
+@mcp.tool()
+def mlb_game_boxscore(game_pk: int) -> dict[str, Any]:
+    """Trimmed box score for one game.
+
+    Fetches ``/game/{game_pk}/boxscore`` (``game_pk`` comes from
+    ``mlb_team_schedule``) and returns ``{game_pk, home, away, officials,
+    weather, info, cached, source_url}``. ``home`` and ``away`` are each
+    ``{team, totals, batting, pitching}``: ``team`` is ``{id, name,
+    abbreviation}``, ``totals`` is ``{runs, hits, errors, left_on_base}``,
+    ``batting`` has one row per lineup slot holder in lineup order
+    (``{player_id, name, position, slot, substitute, ab, r, h, doubles,
+    triples, hr, rbi, bb, so, sb, lob, summary}``) and ``pitching`` one row
+    per pitcher in order of appearance (``{player_id, name, ip, h, r, er, bb,
+    so, hr, pitches, strikes, note, summary}``; ``note`` is the decision such
+    as ``"(W, 2-0)"``). ``officials`` is ``[{position, name, id}]``,
+    ``weather`` is ``{conditions, wind}`` and ``info`` is ``{venue,
+    attendance, first_pitch, duration}``, all null when the API omits them.
+    Unknown game ids fail with the API's error message.
+    """
+    try:
+        box, cached, url = games.game_boxscore(get_client(), game_pk)
+    except games.GameError as exc:
+        raise ToolError(str(exc)) from exc
+    except APIError as exc:
+        raise ToolError(exc.message) from exc
+    return {"game_pk": game_pk, **box, "cached": cached, "source_url": url}
+
+
+@mcp.tool()
+def mlb_live_linescore(game_pk: int) -> dict[str, Any]:
+    """Current linescore of one game, suitable for polling.
+
+    Fetches ``/game/{game_pk}/linescore`` with a 30 second cache lifetime
+    (instead of the server-wide TTL) and returns ``{game_pk, status, inning,
+    half, balls, strikes, outs, innings, totals, cached, source_url}``.
+    ``status`` is ``scheduled``, ``in_progress`` or ``final``, derived from
+    the count and score because the endpoint has no status field. ``inning``
+    is the current inning (null before first pitch), ``half`` is ``top``,
+    ``middle``, ``bottom`` or ``end``. ``innings`` is ``[{n, home, away}]``
+    with runs per half-inning (null for a half not yet played); ``totals``
+    is ``{home: {runs, hits, errors, left_on_base}, away: {...}}``.
+    Unknown game ids fail with the API's error message.
+    """
+    try:
+        line, cached, url = games.live_linescore(get_client(), game_pk)
+    except games.GameError as exc:
+        raise ToolError(str(exc)) from exc
+    except APIError as exc:
+        raise ToolError(exc.message) from exc
+    return {"game_pk": game_pk, **line, "cached": cached, "source_url": url}
 
 
 def build_parser() -> argparse.ArgumentParser:

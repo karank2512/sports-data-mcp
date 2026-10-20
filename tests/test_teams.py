@@ -320,7 +320,6 @@ def test_standings_rejects_unknown_league(injected_client, request_log) -> None:
 
 def test_tools_list_includes_team_tools(injected_client) -> None:
     tools = {t.name: t for t in asyncio.run(server.mcp.list_tools())}
-    assert len(tools) == 5
     assert {"mlb_team_schedule", "mlb_standings"} <= set(tools)
 
     schedule = tools["mlb_team_schedule"].input_schema
