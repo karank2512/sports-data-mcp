@@ -5,25 +5,38 @@ from __future__ import annotations
 import argparse
 import os
 import sys
+from collections.abc import Iterator, Mapping
+from contextlib import contextmanager
 from typing import Any
 
 from mcp.server.mcpserver import MCPServer
-from mcp.server.mcpserver.exceptions import ToolError
 
 from sports_data_mcp import __version__
+from sports_data_mcp.errors import bad_input, from_api_error
 from sports_data_mcp.mlb import games, players, teams
 from sports_data_mcp.mlb.client import DEFAULT_BASE_URL, DEFAULT_CACHE_DIR, DEFAULT_TTL_S, APIError, MLBClient
+
+OFFLINE_ENV = "SPORTS_DATA_MCP_OFFLINE"
+OFFLINE_TRUE = ("1", "true", "yes")
 
 mcp = MCPServer(
     name="sports-data-mcp",
     version=__version__,
     instructions=(
         "Tools over the public MLB Stats API (statsapi.mlb.com). "
-        "Responses are cached on disk; `cached` in a result means no request was made."
+        "Responses are cached on disk; `cached` in a result means no request was made. "
+        'Every failure is a tool error whose text holds {"error": {"kind", "message", "retry_after_s"}}; '
+        "kind is not_found, rate_limited, upstream, bad_input or offline."
     ),
 )
 
 _client: MLBClient | None = None
+
+
+def offline_from_env(environ: Mapping[str, str] | None = None) -> bool:
+    """Whether ``SPORTS_DATA_MCP_OFFLINE`` asks for cache-only mode (``1``, ``true`` or ``yes``)."""
+    env = os.environ if environ is None else environ
+    return env.get(OFFLINE_ENV, "").strip().lower() in OFFLINE_TRUE
 
 
 def get_client() -> MLBClient:
@@ -34,7 +47,7 @@ def get_client() -> MLBClient:
             base_url=os.environ.get("SPORTS_DATA_MCP_BASE_URL", DEFAULT_BASE_URL),
             cache_dir=os.environ.get("SPORTS_DATA_MCP_CACHE_DIR") or DEFAULT_CACHE_DIR,
             ttl_s=float(os.environ.get("SPORTS_DATA_MCP_TTL_S", DEFAULT_TTL_S)),
-            offline=os.environ.get("SPORTS_DATA_MCP_OFFLINE", "") in ("1", "true", "yes"),
+            offline=offline_from_env(),
         )
     return _client
 
@@ -45,6 +58,24 @@ def set_client(client: MLBClient | None) -> None:
     _client = client
 
 
+@contextmanager
+def tool_errors() -> Iterator[None]:
+    """Turn every anticipated failure into the one documented error shape.
+
+    Caller mistakes (:class:`~sports_data_mcp.mlb.players.PlayerError`,
+    :class:`~sports_data_mcp.mlb.teams.TeamError`,
+    :class:`~sports_data_mcp.mlb.games.GameError`) become ``bad_input``;
+    :class:`APIError` keeps the kind the client assigned (``not_found``,
+    ``rate_limited``, ``upstream``, ``bad_input`` or ``offline``).
+    """
+    try:
+        yield
+    except (players.PlayerError, teams.TeamError, games.GameError) as exc:
+        raise bad_input(str(exc)) from exc
+    except APIError as exc:
+        raise from_api_error(exc) from exc
+
+
 @mcp.tool()
 def mlb_ping() -> dict[str, Any]:
     """Check that the MLB Stats API is reachable.
@@ -53,9 +84,10 @@ def mlb_ping() -> dict[str, Any]:
     ``cached`` says whether the answer came from the on-disk cache and
     ``teams`` is the number of MLB teams returned.
     """
-    data, cached = get_client().fetch("/teams", {"sportId": 1})
-    teams = data.get("teams", []) if isinstance(data, dict) else []
-    return {"ok": True, "cached": cached, "teams": len(teams)}
+    with tool_errors():
+        data, cached = get_client().fetch("/teams", {"sportId": 1})
+    team_list = data.get("teams", []) if isinstance(data, dict) else []
+    return {"ok": True, "cached": cached, "teams": len(team_list)}
 
 
 @mcp.tool()
@@ -67,12 +99,8 @@ def mlb_search_player(name: str, active_only: bool = True) -> list[dict[str, Any
     be at least 2 characters. With ``active_only`` (the default) retired and
     inactive people are dropped. Use the ``id`` with ``mlb_player_stats``.
     """
-    try:
+    with tool_errors():
         found, _cached, _url = players.search_player(get_client(), name, active_only=active_only)
-    except players.PlayerError as exc:
-        raise ToolError(str(exc)) from exc
-    except APIError as exc:
-        raise ToolError(exc.message) from exc
     return found
 
 
@@ -93,12 +121,8 @@ def mlb_player_stats(
     and ``player_id``. The result also carries ``source_url`` and ``cached``.
     Unknown player ids fail with the API's error message.
     """
-    try:
+    with tool_errors():
         splits, cached, url = players.player_stats(get_client(), player_id, season, group=group, type=type)
-    except players.PlayerError as exc:
-        raise ToolError(str(exc)) from exc
-    except APIError as exc:
-        raise ToolError(exc.message) from exc
     return {
         "player_id": player_id,
         "season": season if type == "season" else None,
@@ -124,18 +148,14 @@ def mlb_team_schedule(team: str | int, start: str, end: str) -> dict[str, Any]:
     game is ``{game_pk, date, home, away, status, home_score, away_score,
     venue}``; scores are null until the API publishes them.
     """
-    try:
-        games, cached, url, record = teams.team_schedule(get_client(), team, start, end)
-    except teams.TeamError as exc:
-        raise ToolError(str(exc)) from exc
-    except APIError as exc:
-        raise ToolError(exc.message) from exc
+    with tool_errors():
+        game_list, cached, url, record = teams.team_schedule(get_client(), team, start, end)
     return {
         "team_id": record.get("id"),
         "team": record.get("name"),
         "start": start,
         "end": end,
-        "games": games,
+        "games": game_list,
         "cached": cached,
         "source_url": url,
     }
@@ -153,12 +173,8 @@ def mlb_standings(season: int, league: teams.League = "all") -> dict[str, Any]:
     ``pct`` and ``gb`` are the API's strings verbatim (``".580"``, ``"-"`` for
     the leader); ``streak`` is a code such as ``"W4"``.
     """
-    try:
+    with tool_errors():
         divisions, cached, url = teams.standings(get_client(), season, league=league)
-    except teams.TeamError as exc:
-        raise ToolError(str(exc)) from exc
-    except APIError as exc:
-        raise ToolError(exc.message) from exc
     return {
         "season": season,
         "league": league,
@@ -187,12 +203,8 @@ def mlb_game_boxscore(game_pk: int) -> dict[str, Any]:
     attendance, first_pitch, duration}``, all null when the API omits them.
     Unknown game ids fail with the API's error message.
     """
-    try:
+    with tool_errors():
         box, cached, url = games.game_boxscore(get_client(), game_pk)
-    except games.GameError as exc:
-        raise ToolError(str(exc)) from exc
-    except APIError as exc:
-        raise ToolError(exc.message) from exc
     return {"game_pk": game_pk, **box, "cached": cached, "source_url": url}
 
 
@@ -211,12 +223,8 @@ def mlb_live_linescore(game_pk: int) -> dict[str, Any]:
     is ``{home: {runs, hits, errors, left_on_base}, away: {...}}``.
     Unknown game ids fail with the API's error message.
     """
-    try:
+    with tool_errors():
         line, cached, url = games.live_linescore(get_client(), game_pk)
-    except games.GameError as exc:
-        raise ToolError(str(exc)) from exc
-    except APIError as exc:
-        raise ToolError(exc.message) from exc
     return {"game_pk": game_pk, **line, "cached": cached, "source_url": url}
 
 
@@ -241,20 +249,24 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--offline",
         action="store_true",
-        help="serve only from the cache; never contact statsapi.mlb.com",
+        help=f"serve only from the cache; never contact statsapi.mlb.com (same as {OFFLINE_ENV}=1)",
     )
     return parser
 
 
-def main(argv: list[str] | None = None) -> int:
-    args = build_parser().parse_args(argv)
+def apply_args(args: argparse.Namespace) -> None:
+    """Write CLI options into the environment variables :func:`get_client` reads."""
     if args.cache_dir is not None:
         os.environ["SPORTS_DATA_MCP_CACHE_DIR"] = args.cache_dir
     if args.ttl is not None:
         os.environ["SPORTS_DATA_MCP_TTL_S"] = str(args.ttl)
     if args.offline:
-        os.environ["SPORTS_DATA_MCP_OFFLINE"] = "1"
+        os.environ[OFFLINE_ENV] = "1"
     set_client(None)
+
+
+def main(argv: list[str] | None = None) -> int:
+    apply_args(build_parser().parse_args(argv))
     mcp.run("stdio")
     return 0
 
