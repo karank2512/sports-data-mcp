@@ -9,14 +9,19 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import os
 import tempfile
 import time
 from collections.abc import Callable, Mapping
+from datetime import timezone
+from email.utils import parsedate_to_datetime
 from pathlib import Path
 from typing import Any
 
 import httpx
+
+from sports_data_mcp import __version__
 
 DEFAULT_BASE_URL = "https://statsapi.mlb.com/api/v1"
 DEFAULT_CACHE_DIR = Path("~/.cache/sports-data-mcp")
@@ -24,6 +29,7 @@ DEFAULT_TTL_S = 3600
 DEFAULT_TIMEOUT_S = 10.0
 DEFAULT_BACKOFF_S = 1.0
 MAX_BACKOFF_S = 10.0
+USER_AGENT = f"sports-data-mcp/{__version__}"
 
 Params = Mapping[str, Any] | None
 
@@ -33,15 +39,46 @@ class APIError(Exception):
 
     ``status`` is the HTTP status code, or ``None`` when no response was
     received (network failure, timeout, offline cache miss).
+
+    ``kind`` classifies the failure for callers that do not care about HTTP:
+    ``not_found`` (404), ``rate_limited`` (429), ``bad_input`` (400),
+    ``offline`` (cache miss in offline mode) and ``upstream`` for everything
+    else: 5xx, other 4xx, bad JSON, timeouts and connection failures. It is
+    derived from ``status`` by :func:`kind_for_status` unless given.
+    ``retry_after_s`` is the API's ``Retry-After`` header in whole seconds,
+    or ``None`` when there was none.
     """
 
-    def __init__(self, status: int | None, message: str) -> None:
+    def __init__(
+        self,
+        status: int | None,
+        message: str,
+        *,
+        kind: str | None = None,
+        retry_after_s: int | None = None,
+    ) -> None:
         super().__init__(message)
         self.status = status
         self.message = message
+        self.kind = kind if kind is not None else kind_for_status(status)
+        self.retry_after_s = retry_after_s
 
     def __repr__(self) -> str:  # pragma: no cover - debugging aid
-        return f"APIError(status={self.status!r}, message={self.message!r})"
+        return (
+            f"APIError(status={self.status!r}, message={self.message!r}, "
+            f"kind={self.kind!r}, retry_after_s={self.retry_after_s!r})"
+        )
+
+
+def kind_for_status(status: int | None) -> str:
+    """Error kind for an HTTP status; ``None`` (no response at all) is ``upstream``."""
+    if status == 404:
+        return "not_found"
+    if status == 429:
+        return "rate_limited"
+    if status == 400:
+        return "bad_input"
+    return "upstream"
 
 
 class MLBClient:
@@ -82,7 +119,7 @@ class MLBClient:
         self._http = httpx.Client(
             timeout=timeout_s,
             transport=transport,
-            headers={"User-Agent": "sports-data-mcp/0.1"},
+            headers={"User-Agent": USER_AGENT},
             follow_redirects=True,
         )
 
@@ -139,7 +176,7 @@ class MLBClient:
                 return entry["data"], True
 
         if use_offline:
-            raise APIError(None, f"offline: no cached response for {url}")
+            raise APIError(None, f"offline: no cached response for {url}", kind="offline")
 
         data = self._request(url)
         self._write_cache(url, data)
@@ -157,12 +194,19 @@ class MLBClient:
     # -- network -----------------------------------------------------------
 
     def _request(self, url: str) -> Any:
+        """GET ``url`` with one retry on 429, 5xx and transport failures.
+
+        Failures map to :class:`APIError` kinds: 404 ``not_found``, 429
+        ``rate_limited`` (``retry_after_s`` from ``Retry-After``), 400
+        ``bad_input``, other 4xx/5xx, bad JSON and transport errors such as
+        timeouts ``upstream``.
+        """
         last_error: APIError | None = None
         for attempt in range(2):
             try:
                 response = self._http.get(url)
             except httpx.HTTPError as exc:
-                last_error = APIError(None, f"{type(exc).__name__}: {exc}")
+                last_error = APIError(None, f"{type(exc).__name__}: {exc}", kind="upstream")
                 if attempt == 0:
                     self._sleep(self.backoff_s)
                     continue
@@ -170,9 +214,11 @@ class MLBClient:
 
             status = response.status_code
             if status == 429 or status >= 500:
-                last_error = APIError(status, _error_message(response))
+                retry_after = _retry_after(response, self._clock)
+                last_error = APIError(status, _error_message(response), retry_after_s=retry_after)
                 if attempt == 0:
-                    self._sleep(_retry_delay(response, self.backoff_s))
+                    delay = self.backoff_s if retry_after is None else min(max(float(retry_after), 0.0), MAX_BACKOFF_S)
+                    self._sleep(delay)
                     continue
                 raise last_error
             if status >= 400:
@@ -180,7 +226,7 @@ class MLBClient:
             try:
                 return response.json()
             except ValueError as exc:
-                raise APIError(status, f"invalid JSON from {url}: {exc}") from exc
+                raise APIError(status, f"invalid JSON from {url}: {exc}", kind="upstream") from exc
         raise last_error if last_error is not None else APIError(None, "request failed")  # pragma: no cover
 
     # -- cache -------------------------------------------------------------
@@ -221,11 +267,25 @@ def _error_message(response: httpx.Response) -> str:
     return f"HTTP {response.status_code} {reason} for {response.url}" + (f": {text}" if text else "")
 
 
-def _retry_delay(response: httpx.Response, default: float) -> float:
-    header = response.headers.get("Retry-After")
-    if header:
+def _retry_after(response: httpx.Response, clock: Callable[[], float]) -> int | None:
+    """``Retry-After`` in whole seconds (rounded up), or ``None`` if absent or unparseable.
+
+    Accepts both forms the header allows: a delay in seconds and an HTTP date,
+    which is converted to a delay against ``clock``. Negative values clamp to 0.
+    """
+    header = response.headers.get("Retry-After", "").strip()
+    if not header:
+        return None
+    try:
+        seconds = float(header)
+    except ValueError:
         try:
-            return min(max(float(header), 0.0), MAX_BACKOFF_S)
-        except ValueError:
-            pass
-    return default
+            when = parsedate_to_datetime(header)
+        except (TypeError, ValueError):
+            return None
+        if when.tzinfo is None:
+            when = when.replace(tzinfo=timezone.utc)
+        seconds = when.timestamp() - clock()
+    if math.isnan(seconds) or math.isinf(seconds):
+        return None
+    return max(math.ceil(seconds), 0)
